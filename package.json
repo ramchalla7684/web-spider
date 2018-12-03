@@ -1,0 +1,23 @@
+{
+  "name": "web-spider",
+  "version": "1.0.0",
+  "description": "Search engine",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://ramchalla7684@bitbucket.org/ramchalla7684/web-spider.git"
+  },
+  "author": "Ram, Ramana, Srikar",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/ramchalla7684/web-spider#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "morgan": "^1.9.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.7"
+  }
+}
