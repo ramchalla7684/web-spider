@@ -1,0 +1,7 @@
+{
+    domain {
+        url {
+            protocol, host, endpoint
+        }
+    }
+}
