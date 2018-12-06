@@ -46,11 +46,13 @@ let removeTags = (...args) => {
     else if (args.length === 2) {
         if (args[1] === 'ALL') {
 
-
             let title = document.querySelector("html head title");
 
             let description = document.querySelector("html head meta[name=description]");
             description = removeSpecialCharacters(description.getAttribute("content"));
+
+            let keywords = document.querySelector("html head meta[name=keywords]");
+            keywords = removeSpecialCharacters(keywords.getAttribute("content"));
 
 
             let text = "";
@@ -61,7 +63,7 @@ let removeTags = (...args) => {
                 text = text.concat(" ", removeSpecialCharacters(el.textContent));
             }
 
-            return {title, description, text};
+            return {title, description, keywords, text};
         }
     }
 
