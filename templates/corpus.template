@@ -1,0 +1,4 @@
+corpus 
+        |_  { domainname }
+                            |_  { content }                  
+                            |_  { content }
