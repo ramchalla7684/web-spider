@@ -1,30 +1,57 @@
 const request = require('request');
-const jsdom = require('jsdom');
-const fs = require('fs');
-
-const { JSDOM } = jsdom;
+const { JSDOM } = require('jsdom');
+const frontier = require('../util/frontier');
+const corpus = require('../util/corpus');
 
 let crawl = () => {
-    request('https://www.sciencedaily.com/terms/artificial_intelligence.htm', (error, response, body) => {
+
+    fetch('https://www.sciencedaily.com/terms/artificial_intelligence.htm', (content, error) => {
         if (error) {
             console.log(error);
             return;
         }
 
+        console.log(content);
+    });
+}
+
+
+let fetch = (link, callback) => {
+    request(link, (error, response, body) => {
+        if (error) {
+            callback(undefined, undefined, error);
+            return;
+        }
+
         if (response.statusCode !== 200) {
             console.log(response.statusCode);
+            callback(undefined, undefined, new Error("Status not okay"));
             return;
         }
 
         let dom = new JSDOM(body);
         let document = dom.window.document;
 
-        document = removeTags(document, 'iframe', 'link', 'script', 'noscript', 'style');
+        let content = purge(document);
 
-        let content = removeTags(document, 'ALL');
-        fs.writeFileSync('scripts/content.txt', content.text);
+        callback(content, undefined);
 
     });
+}
+
+let purge = (document) => {
+
+    document = removeTags(document, 'iframe', 'link', 'script', 'noscript', 'style');
+
+    let aTags = document.querySelectorAll("a");
+    let links = [];
+    for (let a of aTags) {
+        links.push(a.getAttribute("href"));
+    }
+
+    let { title, description, keywords, text } = removeTags(document, 'ALL');
+
+    return { title, description, keywords, text, links };
 }
 
 
@@ -63,7 +90,7 @@ let removeTags = (...args) => {
                 text = text.concat(" ", removeSpecialCharacters(el.textContent));
             }
 
-            return {title, description, keywords, text};
+            return { title, description, keywords, text };
         }
     }
 
@@ -71,8 +98,7 @@ let removeTags = (...args) => {
 }
 
 let removeSpecialCharacters = (text) => {
-    text = text.replace(/\W+/g, " ").replace(/\s+/g, " ");
-    return text;
+    return text.replace(/\W+/g, " ").replace(/\s+/g, " ");
 }
 
 crawl();
