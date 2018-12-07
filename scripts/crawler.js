@@ -1,31 +1,37 @@
 const request = require('request');
 const { JSDOM } = require('jsdom');
-const frontier = require('../util/frontier');
-const corpus = require('../util/corpus');
+const { URL } = require('../util/url');
+const { Frontier } = require('../util/frontier');
+const { Corpus } = require('../util/corpus');
 
-let crawl = () => {
+let frontier = new Frontier();
 
-    fetch('https://www.sciencedaily.com/terms/artificial_intelligence.htm', (content, error) => {
+let crawl = (url) => {
+
+    let hyperlink = URL.join(url);
+
+    fetch(hyperlink, (error, content) => {
         if (error) {
             console.log(error);
             return;
         }
 
-        console.log(content);
+        frontier.add(content.links, url);
+        Corpus.store(content, url);
     });
 }
 
 
-let fetch = (link, callback) => {
-    request(link, (error, response, body) => {
+let fetch = (url, callback) => {
+    request(url, (error, response, body) => {
         if (error) {
-            callback(undefined, undefined, error);
+            callback(error, undefined, undefined);
             return;
         }
 
         if (response.statusCode !== 200) {
             console.log(response.statusCode);
-            callback(undefined, undefined, new Error("Status not okay"));
+            callback(new Error("Status not okay"), undefined, undefined);
             return;
         }
 
@@ -33,8 +39,7 @@ let fetch = (link, callback) => {
         let document = dom.window.document;
 
         let content = purge(document);
-
-        callback(content, undefined);
+        callback(undefined, content);
 
     });
 }
@@ -46,12 +51,14 @@ let purge = (document) => {
     let aTags = document.querySelectorAll("a");
     let links = [];
     for (let a of aTags) {
-        links.push(a.getAttribute("href"));
+        let href = a.getAttribute("href");
+        if (href && !href.startsWith("#")) {
+            links.push(href);
+        }
     }
 
-    let { title, description, keywords, text } = removeTags(document, 'ALL');
-
-    return { title, description, keywords, text, links };
+    let content = removeTags(document, 'ALL');
+    return { ...content, links };
 }
 
 
@@ -74,12 +81,27 @@ let removeTags = (...args) => {
         if (args[1] === 'ALL') {
 
             let title = document.querySelector("html head title");
+            if (title) {
+                title = title.textContent;
+            }
 
             let description = document.querySelector("html head meta[name=description]");
-            description = removeSpecialCharacters(description.getAttribute("content"));
+
+            if (description) {
+                description = removeSpecialCharacters(description.getAttribute("content").trim());
+            }
+            else {
+                description = "";
+            }
 
             let keywords = document.querySelector("html head meta[name=keywords]");
-            keywords = removeSpecialCharacters(keywords.getAttribute("content"));
+
+            if (keywords) {
+                keywords = removeSpecialCharacters(keywords.getAttribute("content").trim());
+            }
+            else {
+                keywords = [];
+            }
 
 
             let text = "";
@@ -87,8 +109,10 @@ let removeTags = (...args) => {
             for (let i = 0; i < body.children.length; i++) {
                 let el = body.children[i];
 
-                text = text.concat(" ", removeSpecialCharacters(el.textContent));
+                text = text.concat(el.textContent, " ");
             }
+            text = removeSpecialCharacters(text);
+            text = text.trim();
 
             return { title, description, keywords, text };
         }
@@ -101,4 +125,12 @@ let removeSpecialCharacters = (text) => {
     return text.replace(/\W+/g, " ").replace(/\s+/g, " ");
 }
 
-crawl();
+
+// let hyperlink = 'https://www.sciencedaily.com/terms/artificial_intelligence.htm';
+
+crawl({
+    protocol: 'http',
+    host: 'www',
+    domain: 'csequest.com',
+    endpoint: '/'
+});

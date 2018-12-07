@@ -1,42 +1,84 @@
+const fs = require('fs');
+const { URL } = require('../util/url');
+
 class Frontier {
-    constructor(seeds) {
-        this.urls = [];
+    constructor() {
+        this.data = {};
+        this.visitedURLs = [];
         this.loadFrontier();
-        this.add(seeds);
-    }
-
-    add(arg) {
-
+        this.loadVisitedURLs();
     }
 
     loadFrontier() {
+        fs.readFile('./assets/frontier.json', (error, data) => {
+            if (error) {
+                console.log(error);
+                return;
+            }
 
+            this.data = JSON.parse(data);
+        });
+    }
+
+    loadVisitedURLs() {
+        fs.readFile('./assets/visited-urls.json', (error, data) => {
+            if (error) {
+                console.log(error);
+                return;
+            }
+
+            this.visitedURLs = JSON.parse(data);
+        });
     }
 
 
-    parse(url) {
-        let protocol = url.split("://")[0];
-        let urn = url.split("://")[1];
-
-        urn = urn.split("/");
-
-        let fqdn = urn[0];
-        fqdn = fqdn.split(".");
-        
-        urn.shift();
-        let endpoint = urn.join("");
+    add(hyperlinks, url) {
 
 
-        let host;
-        let domain;
-        if (fqdn.length === 3) {
-            host = fqdn[0];
-            domain = fqdn[1] + "." + fqdn[2];
+        let addToFrontier = (url) => {
+
+            if (!this.visitedURLs.includes(URL.join(url).toLowerCase())) {
+                if (this.data[url.domain]) {
+
+                    let urlsAdded = this.data[url.domain].urls;
+                    for (let urlAdded of urlsAdded) {
+                        if (url.host === urlAdded.host && url.endpoint === urlAdded.endpoint) {
+                            break;
+                        }
+                    }
+
+                    this.data[url.domain].urls.push({
+                        host: url.host,
+                        endpoint: url.endpoint
+                    });
+                }
+                else {
+                    this.data[url.domain] = {
+                        protocol: url.protocol,
+                        time: 10,
+                        urls: [{
+                            host: url.host,
+                            endpoint: url.endpoint
+                        }]
+                    };
+                }
+            }
         }
-        else {
-            domain = fqdn;
-        }
 
-        return {protocol, host, domain, endpoint};
+        if (hyperlinks instanceof Array) {
+            for (let hyperlink of hyperlinks) {
+                if (hyperlink) {
+                    hyperlink = URL.toAbsoulte(hyperlink, url);
+                    addToFrontier(URL.parse(hyperlink));
+                }
+            }
+        }
+        else if (hyperlinks) {
+            let hyperlink = hyperlinks;
+            hyperlink = URL.toAbsoulte(hyperlink, url);
+            addToFrontier(URL.parse(hyperlink));
+        }
     }
 }
+
+module.exports.Frontier = Frontier;

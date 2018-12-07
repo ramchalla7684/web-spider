@@ -1,7 +1,7 @@
 {
     domain {
-        url {
-            protocol, host, endpoint
-        }
+        time, 
+        protocol,
+        urls [{ host, endpoint }]
     }
 }
