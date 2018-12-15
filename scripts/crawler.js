@@ -132,5 +132,5 @@ crawl({
     protocol: 'http',
     host: 'www',
     domain: 'csequest.com',
-    endpoint: '/'
+    endpoint: '/sponsors'
 });

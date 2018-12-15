@@ -7,6 +7,7 @@ class Frontier {
         this.visitedURLs = [];
         this.loadFrontier();
         this.loadVisitedURLs();
+        this.domains = [];
     }
 
     loadFrontier() {
@@ -17,6 +18,7 @@ class Frontier {
             }
 
             this.data = JSON.parse(data);
+            this.domains = Object.keys(this.data);
         });
     }
 
@@ -34,10 +36,9 @@ class Frontier {
 
     add(hyperlinks, url) {
 
-
         let addToFrontier = (url) => {
 
-            if (!this.visitedURLs.includes(URL.join(url).toLowerCase())) {
+            if (!this.visitedURLs.includes(new RegExp(URL.join(url).toLowerCase()), "ig")) {
                 if (this.data[url.domain]) {
 
                     let urlsAdded = this.data[url.domain].urls;
@@ -61,9 +62,14 @@ class Frontier {
                             endpoint: url.endpoint
                         }]
                     };
+
+                    this.domains.push(url.domain);
                 }
             }
         }
+
+        let hyperlink = URL.join(url);
+        this.visitedURLs.push(hyperlink.toLowerCase());
 
         if (hyperlinks instanceof Array) {
             for (let hyperlink of hyperlinks) {
@@ -78,6 +84,11 @@ class Frontier {
             hyperlink = URL.toAbsoulte(hyperlink, url);
             addToFrontier(URL.parse(hyperlink));
         }
+
+        this.domains.push(this.domains.shift());
+
+        fs.writeFileSync("./assets/frontier.json", JSON.stringify(this.data));
+        fs.writeFileSync("./assets/visited-urls.json", JSON.stringify(this.visitedURLs));
     }
 }
 

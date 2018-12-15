@@ -37,12 +37,13 @@ class URL {
         hyperlink = hyperlink.concat(url.protocol === undefined ? '' : url.protocol.concat('://'));
         hyperlink = hyperlink.concat(url.host === undefined ? '' : url.host.concat('.'));
         hyperlink = hyperlink.concat(url.domain === undefined ? '' : url.domain.concat('/'));
-        hyperlink = hyperlink.concat(url.endpoint === undefined ? '' : url.endpoint);
+        hyperlink = hyperlink.concat(url.endpoint === undefined ? '' : url.endpoint.startsWith("/") ? url.endpoint.substring(1, url.endpoint.length) : url.endpoint);
 
         return hyperlink;
     }
 
     static toAbsoulte(hyperLink, url) {
+
         if (!hyperLink.startsWith("http://") && !hyperLink.startsWith("https://")) {
 
             let suffix = '';

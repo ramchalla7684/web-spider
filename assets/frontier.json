@@ -1,1 +1,102 @@
-{}
+{
+    "csequest.com": {
+        "protocol": "http",
+        "time": 10,
+        "urls": [
+            {
+                "host": "www",
+                "endpoint": "/"
+            },
+            {
+                "host": "www",
+                "endpoint": "events"
+            },
+            {
+                "host": "www",
+                "endpoint": "workshops"
+            },
+            {
+                "host": "www",
+                "endpoint": "gallery"
+            },
+            {
+                "host": "www",
+                "endpoint": "sponsors"
+            },
+            {
+                "host": "www",
+                "endpoint": "contact"
+            },
+            {
+                "host": "www",
+                "endpoint": "developer"
+            },
+            {
+                "host": "www",
+                "endpoint": "developer"
+            },
+            {
+                "host": "www",
+                "endpoint": "/"
+            },
+            {
+                "host": "www",
+                "endpoint": "/"
+            },
+            {
+                "host": "www",
+                "endpoint": "/"
+            },
+            {
+                "host": "www",
+                "endpoint": "/"
+            },
+            {
+                "host": "www",
+                "endpoint": "/"
+            },
+            {
+                "host": "www",
+                "endpoint": "/"
+            },
+            {
+                "host": "www",
+                "endpoint": "/"
+            },
+            {
+                "host": "www",
+                "endpoint": "/"
+            }
+        ]
+    },
+    "facebook.com": {
+        "protocol": "https",
+        "time": 10,
+        "urls": [
+            {
+                "host": "www",
+                "endpoint": "questJNTUH/"
+            }
+        ]
+    },
+    "instagram.com": {
+        "protocol": "https",
+        "time": 10,
+        "urls": [
+            {
+                "host": "www",
+                "endpoint": "quest.jntuh/"
+            }
+        ]
+    },
+    "google.com": {
+        "protocol": "https",
+        "time": 10,
+        "urls": [
+            {
+                "host": "play",
+                "endpoint": "store/apps/details?id=com.myapp.quest2018"
+            }
+        ]
+    }
+}
