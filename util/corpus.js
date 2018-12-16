@@ -25,7 +25,7 @@ class Corpus {
                         console.log(error);
                         return;
                     }
-                    writeToFile(`./corpus/${url.domain}/${Math.random()}.ws`);
+                    writeToFile(`./corpus/${url.domain}/${new Date().valueOf()}.ws`);
                 });
             }
         });

@@ -17,7 +17,12 @@ class Frontier {
                 return;
             }
 
-            this.data = JSON.parse(data);
+            try {
+                this.data = JSON.parse(data);
+            }
+            catch (error) {
+                console.log(error);
+            }
             this.domains = Object.keys(this.data);
         });
     }
@@ -29,7 +34,12 @@ class Frontier {
                 return;
             }
 
-            this.visitedURLs = JSON.parse(data);
+            try {
+                this.visitedURLs = JSON.parse(data);
+            }
+            catch (error) {
+                console.log(error);
+            }
         });
     }
 
@@ -37,8 +47,7 @@ class Frontier {
     add(hyperlinks, url) {
 
         let addToFrontier = (url) => {
-
-            if (!this.visitedURLs.includes(new RegExp(URL.join(url).toLowerCase()), "ig")) {
+            if (!this.visitedURLs.includes(new RegExp(URL.join(url).toLowerCase().replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')), "ig")) {
                 if (this.data[url.domain]) {
 
                     let urlsAdded = this.data[url.domain].urls;
@@ -84,11 +93,6 @@ class Frontier {
             hyperlink = URL.toAbsoulte(hyperlink, url);
             addToFrontier(URL.parse(hyperlink));
         }
-
-        this.domains.push(this.domains.shift());
-
-        fs.writeFileSync("./assets/frontier.json", JSON.stringify(this.data));
-        fs.writeFileSync("./assets/visited-urls.json", JSON.stringify(this.visitedURLs));
     }
 }
 

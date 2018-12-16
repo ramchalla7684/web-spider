@@ -21,11 +21,11 @@ class URL {
 
         let host;
         let domain;
-        if (fqdn.length === 3) {
+        if (fqdn.length >= 3) {
             host = fqdn.shift();
         }
 
-        domain = fqdn[0] + '.' + fqdn[1];
+        domain = fqdn.join(".");
 
         return { protocol, host, domain, endpoint };
     }

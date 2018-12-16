@@ -15,12 +15,13 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/ramchalla7684/web-spider#readme",
   "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
     "express": "^4.16.4",
-    "jsdom": "^13.0.0",
+    "htmlparser2": "^3.10.0",
     "morgan": "^1.9.1",
     "request": "^2.88.0"
   },
   "devDependencies": {
-    "nodemon": "^1.18.7"
+    "nodemon": "^1.18.9"
   }
 }
