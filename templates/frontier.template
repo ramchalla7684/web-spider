@@ -5,3 +5,10 @@
         urls [{ host, endpoint }]
     }
 }
+
+frontier
+        |_  { domainname }
+                            |_  pending.json
+                                            |_ [hyperlink]
+                            |_  visited.json
+                                            |_ { hyperlink { timestamp [value] } }

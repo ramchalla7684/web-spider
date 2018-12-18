@@ -3,95 +3,218 @@ const { URL } = require('../util/url');
 
 class Frontier {
     constructor() {
-        this.data = {};
         this.visitedURLs = [];
-        this.loadFrontier();
-        this.loadVisitedURLs();
         this.domains = [];
+        this.loadDomains();
     }
 
-    loadFrontier() {
-        fs.readFile('./assets/frontier.json', (error, data) => {
+    loadDomains() {
+        fs.readdir('./frontier', (error, files) => {
             if (error) {
                 console.log(error);
                 return;
             }
 
-            try {
-                this.data = JSON.parse(data);
-            }
-            catch (error) {
-                console.log(error);
-            }
-            this.domains = Object.keys(this.data);
+            this.domains = files;
         });
     }
 
-    loadVisitedURLs() {
-        fs.readFile('./assets/visited-urls.json', (error, data) => {
+    static addToVisited(url) {
+        let hyperlink = URL.join(url);
+
+        fs.readFile(`./frontier/${url.domain}/visited.json`, (error, data) => {
+
             if (error) {
-                console.log(error);
-                return;
+                if (error.code !== 'ENOENT') {
+                    console.log(error);
+                }
+                data = {};
+            }
+            else {
+                try {
+                    data = JSON.parse(data);
+                }
+                catch (error) {
+                    data = {};
+                }
             }
 
-            try {
-                this.visitedURLs = JSON.parse(data);
+
+            if (!data[hyperlink]) {
+                data[hyperlink] = {};
+                data[hyperlink].timestamp = [];
             }
-            catch (error) {
-                console.log(error);
-            }
+
+            data[hyperlink].timestamp.push(new Date().valueOf());
+
+            fs.writeFile(`./frontier/${url.domain}/visited.json`, JSON.stringify(data), (error) => {
+                if (error) {
+                    console.log(error);
+                }
+            });
         });
     }
 
+    static addToPending(hyperlinks, url) {
 
-    add(hyperlinks, url) {
+        fs.readFile(`./frontier/${url.domain}/pending.json`, (error, data) => {
 
-        let addToFrontier = (url) => {
-            if (!this.visitedURLs.includes(new RegExp(URL.join(url).toLowerCase().replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')), "ig")) {
-                if (this.data[url.domain]) {
+            if (error) {
+                if (error.code !== 'ENOENT') {
+                    console.log(error);
+                }
+                data = [];
+            }
+            else {
+                try {
+                    data = JSON.parse(data);
+                }
+                catch (error) {
+                    data = [];
+                }
+            }
 
-                    let urlsAdded = this.data[url.domain].urls;
-                    for (let urlAdded of urlsAdded) {
-                        if (url.host === urlAdded.host && url.endpoint === urlAdded.endpoint) {
-                            break;
+
+            fs.readFile(`./frontier/${url.domain}/visited.json`, (error, visited) => {
+                if (error) {
+
+                    if (error.code === 'ENOENT') {
+                        fs.writeFile(`./frontier/${url.domain}/visited.json`, JSON.stringify({}), (error) => {
+                            if (error) {
+                                console.log(error);
+                            }
+                        });
+                    }
+                    else {
+                        console.log(error);
+                    }
+
+                    if (hyperlinks instanceof Array) {
+
+                        for (let hyperlink of hyperlinks) {
+                            if (hyperlink) {
+                                hyperlink = URL.toAbsoulte(hyperlink, url);
+
+                                if (!data.includes(hyperlink)) {
+                                    data.push(hyperlink);
+                                }
+                            }
+                        }
+                    }
+                    else if (hyperlinks) {
+                        let hyperlink = hyperlinks;
+                        hyperlink = URL.toAbsoulte(hyperlink, url);
+
+                        if (!data.includes(hyperlink)) {
+                            data.push(hyperlink);
                         }
                     }
 
-                    this.data[url.domain].urls.push({
-                        host: url.host,
-                        endpoint: url.endpoint
+                    fs.writeFile(`./frontier/${url.domain}/pending.json`, JSON.stringify(data), (error) => {
+                        if (error) {
+                            console.log(error);
+                        }
                     });
                 }
                 else {
-                    this.data[url.domain] = {
-                        protocol: url.protocol,
-                        time: 10,
-                        urls: [{
-                            host: url.host,
-                            endpoint: url.endpoint
-                        }]
-                    };
+                    try {
+                        visited = JSON.parse(visited);
+                    }
+                    catch (error) {
+                        visited = {};
+                    }
 
-                    this.domains.push(url.domain);
+                    if (hyperlinks instanceof Array) {
+
+                        for (let hyperlink of hyperlinks) {
+                            if (hyperlink) {
+                                hyperlink = URL.toAbsoulte(hyperlink, url);
+
+                                if (!data.includes(hyperlink) && !visited[hyperlink]) {
+                                    data.push(hyperlink);
+                                }
+                            }
+                        }
+                    }
+                    else if (hyperlinks) {
+                        let hyperlink = hyperlinks;
+                        hyperlink = URL.toAbsoulte(hyperlink, url);
+
+                        if (!data.includes(hyperlink) && !visited[hyperlink]) {
+                            data.push(hyperlink);
+                        }
+                    }
+
+                    fs.writeFile(`./frontier/${url.domain}/pending.json`, JSON.stringify(data), (error) => {
+                        if (error) {
+                            console.log(error);
+                        }
+                    });
+
                 }
-            }
+
+            });
+        });
+    }
+
+    add(hyperlinks, url) {
+
+        if (this.domains.includes(url.domain)) {
+            Frontier.addToVisited(url);
+            Frontier.addToPending(hyperlinks, url);
         }
-
-        let hyperlink = URL.join(url);
-        this.visitedURLs.push(hyperlink.toLowerCase());
-
-        if (hyperlinks instanceof Array) {
-            for (let hyperlink of hyperlinks) {
-                if (hyperlink) {
-                    hyperlink = URL.toAbsoulte(hyperlink, url);
-                    addToFrontier(URL.parse(hyperlink));
+        else {
+            fs.mkdir(`./frontier/${url.domain}`, (error) => {
+                if (error) {
+                    console.log(error);
+                    return;
                 }
-            }
+
+                this.domains.push(url.domain);
+
+                Frontier.addToVisited(url);
+                Frontier.addToPending(hyperlinks, url);
+            });
         }
-        else if (hyperlinks) {
-            let hyperlink = hyperlinks;
-            hyperlink = URL.toAbsoulte(hyperlink, url);
-            addToFrontier(URL.parse(hyperlink));
+    }
+
+    nextURL(callback) {
+        let domain = this.domains.shift();
+        if (domain) {
+
+            this.domains.push(domain);
+
+            fs.readFile(`./frontier/${domain}/pending.json`, (error, data) => {
+                if (error) {
+                    if (error.code !== 'ENOENT') {
+                        console.log(error);
+                    }
+                    return;
+                }
+
+                try {
+                    data = JSON.parse(data);
+                }
+                catch (error) {
+                    data = [];
+                }
+
+                let hyperlink = data.shift();
+
+                fs.writeFile(`./frontier/${domain}/pending.json`, JSON.stringify(data), (error) => {
+                    if (error) {
+                        console.log(error);
+                        return;
+                    }
+
+                    if (hyperlink) {
+                        callback(undefined, URL.parse(hyperlink));
+                    }
+                    else {
+                        callback(undefined, undefined);
+                    }
+                });
+            });
         }
     }
 }

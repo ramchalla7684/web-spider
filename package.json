@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "crawl": "node scripts/crawler"
+    "crawl": "node --max-old-space-size=4096 scripts/crawler",
+    "index": "node --max-old-space-size=4096 scripts/indexer"
   },
   "repository": {
     "type": "git",

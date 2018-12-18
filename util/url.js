@@ -51,7 +51,11 @@ class URL {
                 suffix = 'https://';
             }
             else {
-                suffix = suffix.concat(url.protocol, '://', url.host, '.', url.domain);
+                suffix = suffix.concat(url.protocol, '://');
+                if (url.host !== undefined) {
+                    suffix = suffix.concat(url.host, '.');
+                }
+                suffix = suffix.concat(url.domain);
 
                 if (!hyperLink.startsWith("/")) {
                     suffix = suffix.concat('/');
@@ -61,6 +65,7 @@ class URL {
 
             hyperLink = suffix.concat(hyperLink);
         }
+
         return hyperLink;
     }
 

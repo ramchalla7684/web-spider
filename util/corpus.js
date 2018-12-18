@@ -15,9 +15,14 @@ class Corpus {
             });
         }
 
+        let filename = url.endpoint.replace(/\W+/g, "-");
+        if (filename.length > 127) {
+            filename = new Date().valueOf();
+        }
+
         fs.exists(`./corpus/${url.domain}`, (exists) => {
             if (exists) {
-                writeToFile(`./corpus/${url.domain}/${new Date().valueOf()}.ws`);
+                writeToFile(`./corpus/${url.domain}/${filename}.json`);
             }
             else {
                 fs.mkdir(`./corpus/${url.domain}`, (error) => {
@@ -25,7 +30,7 @@ class Corpus {
                         console.log(error);
                         return;
                     }
-                    writeToFile(`./corpus/${url.domain}/${new Date().valueOf()}.ws`);
+                    writeToFile(`./corpus/${url.domain}/${filename}.json`);
                 });
             }
         });

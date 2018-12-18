@@ -1,3 +1,4 @@
+const fs = require('fs');
 const request = require('request');
 const { DOM } = require('../util/dom');
 const { URL } = require('../util/url');
@@ -49,43 +50,37 @@ let purge = (document) => {
 
     let links = document.links();
     let content = document.content();
-    
+
     return { ...content, links };
 }
 
+fs.readFile('./assets/seeds.txt', (error, data) => {
+    if (error) {
+        console.log(error);
+        return;
+    }
+
+    data = data.toString();
+    data = data.split("\r\n");
+
+    for (let i = 0; i < data.length; i++) {
+        setTimeout(() => crawl(URL.parse(data[i])), i * 1000);
+    }
+
+});
+
 setInterval(() => {
 
-    let domain = frontier.domains.shift();
-    if (domain) {
-        let url = frontier.data[domain].urls.shift();
-        let protocol = frontier.data[domain].protocol;
+    frontier.nextURL((error, url) => {
+        if (error) {
+            console.log(error);
+            return;
+        }
         if (url) {
-            url = { ...url, domain, protocol };
             crawl(url);
         }
-
-        frontier.domains.push(domain);
-    }
-}, 100);
-
-crawl({
-    protocol: 'http',
-    host: 'www',
-    domain: 'csequest.com',
-    endpoint: '/'
-});
-
-let saveState = () => {
-    console.log("Saving frontier and visited urls");
-    fs.writeFileSync("./assets/frontier.json", JSON.stringify(frontier.data));
-    fs.writeFileSync("./assets/visited-urls.json", JSON.stringify(frontier.visitedURLs));
-}
-
-process.on('beforeExit', (code) => {
-    console.log(`Exit code: ${code}`);
-    saveState();
-});
-process.on('SIGNINT', saveState);
+    })
+}, 500);
 
 process.on('uncaughtException', (error) => {
     console.log(error);

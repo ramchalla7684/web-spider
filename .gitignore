@@ -1,4 +1,10 @@
 corpus
+frontier
+indexes
+
+website/node_modules
+
+.vscode
 
 # Logs
 logs

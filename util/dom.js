@@ -69,7 +69,7 @@ class DOM {
         aTags.each((index, a) => {
             let href = this.$(a).attr("href");
             if (href && !href.startsWith("#")) {
-                links.push(href);
+                links.push(href.trim());
             }
         });
 

@@ -1,4 +1,4 @@
-corpus 
+corpus
         |_  { domainname }
-                            |_  { content }                  
+                            |_  { content }
                             |_  { content }
