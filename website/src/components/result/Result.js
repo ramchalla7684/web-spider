@@ -1,17 +1,15 @@
 import React from 'react';
 
+import './Result.css';
+
 class Result extends React.Component {
-
-    constructor(props) {
-        super(props);
-    }
-
+    
     render() {
         return (
-            <div>
-                <a href={this.props.href}>{this.props.title}</a>
-                <p>{this.props.description}</p>
-                <a href={this.props.href}>{this.props.href}</a>
+            <div className="Result">
+                <a className="title" href={this.props.data.href}>{this.props.data.title}</a>
+                <p className="description">{this.props.data.description}</p>
+                <a className="hyperlink" href={this.props.data.href}>{this.props.data.href}</a>
             </div>
         );
     }

@@ -1,7 +1,6 @@
 .Home {
     height: 100vh;
     width: 100vw;
-    background-color: #141414;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -12,7 +11,7 @@
 }
 
 .Home .search-box {
-    background: #2f3640;
+    background: #1e222b;
     height: var(--search-box-height);
     border-radius: var(--search-box-height);
     padding: 10px;
@@ -20,7 +19,7 @@
 
 .Home .voice-box {
     position: absolute;
-    bottom: calc(50vh - 150px);
+    bottom: calc(50vh - 165px);
     width: 100vw;
 
     flex-direction: column;
@@ -51,7 +50,7 @@
 }
 
 .Home .search-box.expanded .icon-search {
-    background-color: white;
+    background-color: #e6e6e6;
 }
 
 .Home .icon-search {
@@ -70,7 +69,7 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: #2f3640;
+    background: #1e222b;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -87,16 +86,16 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 35px;
+    margin-bottom: 40px;
 }
 
 .Home .icon-microphone:hover, .Home .voice-box.active .icon-microphone {
-    background: #fff;
+    background: #e6e6e6;
     box-shadow: 0 0 5px rgba(255, 255, 255, 1), 0 0 10px rgba(255, 255, 255, 1), 0 0 15px rgba(255, 255, 255, 1), 0 0 0 30px rgba(255, 255, 255, 0.05), 0 0 0 22px rgba(255, 255, 255, 0.05), 0 0 0 15px rgba(255, 255, 255, 0.05), 0 0 0 7px rgba(255, 255, 255, 0.05);
 }
 
 .Home .voice-box .instructions {
-    color: white;
+    color: #e6e6e6;
     font-size: 0.85em;
     visibility: hidden;
 }

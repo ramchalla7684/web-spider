@@ -1,0 +1,40 @@
+.Result {
+    background-color: #282c34;
+    margin: 5px 0px 0px 5px;
+    border-radius: 4px;
+    padding: 18px 10px;
+    background-color: #21242b;
+    transition: opacity 0.2s;
+}
+
+.Result:hover {
+    opacity: 0.8;
+}
+
+.Result > * {
+    padding: 10px;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.Result .title {
+    color: #e6e6e6;
+    font-weight: bold;
+    letter-spacing: 0.09em;
+    font-size: 1.2em;
+}
+
+.Result .description {
+    color: #c2c2c2;
+    font-size: 0.95em;
+    line-height: 1.2em;
+}
+
+.Result .hyperlink {
+    color: #c2c2c2;
+    font-size: 0.85em;
+}
+
+.Result > .title:hover, .Result .hyperlink:hover {
+    opacity: 0.75;
+}
