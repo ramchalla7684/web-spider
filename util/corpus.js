@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { URL } = require('../util/url');
 
 class Corpus {
     constructor() {
@@ -6,6 +7,8 @@ class Corpus {
     }
 
     static store(content, url) {
+
+        content = { ...content, url: URL.join(url) };
 
         let writeToFile = (path) => {
             fs.writeFile(path, JSON.stringify(content), (error) => {
@@ -20,20 +23,18 @@ class Corpus {
             filename = new Date().valueOf();
         }
 
-        fs.exists(`./corpus/${url.domain}`, (exists) => {
-            if (exists) {
+        if (fs.existsSync(`./corpus/${url.domain}`)) {
+            writeToFile(`./corpus/${url.domain}/${filename}.json`);
+        }
+        else {
+            fs.mkdir(`./corpus/${url.domain}`, (error) => {
+                if (error) {
+                    console.log(error);
+                    return;
+                }
                 writeToFile(`./corpus/${url.domain}/${filename}.json`);
-            }
-            else {
-                fs.mkdir(`./corpus/${url.domain}`, (error) => {
-                    if (error) {
-                        console.log(error);
-                        return;
-                    }
-                    writeToFile(`./corpus/${url.domain}/${filename}.json`);
-                });
-            }
-        });
+            });
+        }
     }
 }
 

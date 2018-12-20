@@ -3,7 +3,7 @@ const stemmer = require('../util/stemmer');
 
 let stopWords = [];
 
-let index = (document, fileName) => {
+let index = (document) => {
 
     let indexes = {};
 
@@ -13,6 +13,8 @@ let index = (document, fileName) => {
     let descrption = document["descrption"];
     let keywords = document["keywords"];
     let text = document["text"];
+
+    let url = document["url"];
 
     if (title) {
         terms.push(...title.split(" "));
@@ -39,10 +41,13 @@ let index = (document, fileName) => {
             term = stemmer(term);
             if (!indexes[term]) {
                 indexes[term] = {};
-                indexes[term][fileName] = [];
+                indexes[term][url] = [];
+            }
+            else if (!indexes[term][url]) {
+                indexes[term][url] = [];
             }
 
-            indexes[term][fileName].push(i);
+            indexes[term][url].push(i);
         }
     }
 
@@ -53,33 +58,17 @@ let save = (indexes) => {
 
     for (let term in indexes) {
         try {
-            let fileName = term.charAt(0);
+            let fileName = term;
 
-            if (!fs.existsSync(`./indexes/${fileName}.json`)) {
-                fs.writeFileSync(`./indexes/${fileName}.json`, JSON.stringify({}));
+            let savedIndexes = {};
+            if (fs.existsSync(`./indexes/${fileName}.json`)) {
+                savedIndexes = fs.readFileSync(`./indexes/${fileName}.json`);
+                savedIndexes = JSON.parse(savedIndexes);
             }
 
-            let savedIndexes = fs.readFileSync(`./indexes/${fileName}.json`);
-            savedIndexes = JSON.parse(savedIndexes);
-
-            if (savedIndexes[term]) {
-
-                for (let fileName in indexes[term]) {
-                    if (savedIndexes[term][fileName]) {
-                        savedIndexes[term][fileName].push(...indexes[term][fileName]);
-                    }
-                    else {
-                        savedIndexes[term][fileName] = indexes[term][fileName];
-                    }
-                }
-
-            }
-            else {
-                savedIndexes[term] = indexes[term];
-            }
+            savedIndexes = { ...savedIndexes, ...indexes[term] };
 
             fs.writeFileSync(`./indexes/${fileName}.json`, JSON.stringify(savedIndexes));
-            console.log("Saved indexes ", fileName);
         }
         catch (error) {
             console.log(error);
@@ -100,22 +89,30 @@ fs.readdir('./corpus', (error, domains) => {
         return;
     }
 
-    for (let domain of domains) {
+    // Just for progress status
+    
+    for (let i = 0; i < domains.length; i++) {
+
+        let domain = domains[i];
         try {
             let files = fs.readdirSync(`./corpus/${domain}`);
             for (let file of files) {
                 try {
                     let document = fs.readFileSync(`./corpus/${domain}/${file}`);
                     document = JSON.parse(document);
-                    index(document, file);
+                    index(document);
                 }
                 catch (error) {
                     console.log(error);
                 }
+
             }
         }
         catch (error) {
             console.log(error);
         }
+
+        //Just for progress status
+        console.log("Domain: " + (i+1));
     }
 });

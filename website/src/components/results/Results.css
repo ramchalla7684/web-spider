@@ -1,13 +1,13 @@
 .Results {
     padding: 20px 0;
-    display: inline-flex;
+    display: flex;
     flex-direction: column;
-    justify-content: center;
+    align-items: center;
     --fa-icon-size: 25px;
 }
 
 .Results .results-container {
-    width: 100%;
+    max-width: 560px;
     margin-top: 25px;
 }
 

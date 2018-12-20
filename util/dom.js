@@ -28,6 +28,10 @@ class DOM {
         let title = this.querySelector("html head title");
         if (title) {
             title = title.text();
+            if(title)
+            {
+                title = DOM.removeSpecialCharacters(title).trim();
+            }
         }
 
         let description = this.querySelector("html head meta[name=description]");
@@ -47,14 +51,17 @@ class DOM {
         if (keywords) {
             keywords = keywords.attr("content");
             if (keywords) {
-                keywords = DOM.removeSpecialCharacters(keywords.trim());
+                keywords = DOM.removeSpecialCharacters(keywords).trim();
             }
         }
         else {
-            keywords = [];
+            keywords = "";
         }
 
 
+        this.querySelectorAll("html body *").each((index, element) => {
+            this.$(element).append(" ");
+        });
         let body = this.querySelector("html body");
         let text = body.text();
         text = DOM.removeSpecialCharacters(text);
@@ -77,7 +84,7 @@ class DOM {
     }
 
     static removeSpecialCharacters(text) {
-        return text.replace(/\W+/g, " ").replace(/\s+/g, " ");
+        return text.replace(/[\W_]+/g, " ").replace(/\s\s+/g, " ");
     }
 }
 

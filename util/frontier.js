@@ -9,6 +9,9 @@ class Frontier {
     }
 
     loadDomains() {
+
+        fs.readdi
+
         fs.readdir('./frontier', (error, files) => {
             if (error) {
                 console.log(error);

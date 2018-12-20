@@ -1,4 +1,5 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 import './Home.css';
 import speechRecognition from '../../util/speech';
 
@@ -9,7 +10,8 @@ class Home extends React.Component {
         this.state = {
             searchBoxState: "collapsed",
             voiceBoxState: "inactive",
-            query: ""
+            query: "",
+            redirectToResults: false
         };
 
         this.onMouseEnterSearchBox = this.onMouseEnterSearchBox.bind(this);
@@ -19,8 +21,8 @@ class Home extends React.Component {
         this.onMouseLeaveMicroPhone = this.onMouseLeaveMicroPhone.bind(this);
 
         this.onClickMicroPhone = this.onClickMicroPhone.bind(this);
-
         this.onInputChange = this.onInputChange.bind(this);
+        this.redirectToResults = this.redirectToResults.bind(this);
     }
 
     componentDidMount() {
@@ -42,6 +44,13 @@ class Home extends React.Component {
                     }, () => {
                         document.querySelector(".Home #input-query").focus();
                     });
+                }
+            }
+            else
+            {
+                if(event.key === "Enter" && this.state.query.length !== 0)
+                {
+                    this.redirectToResults();
                 }
             }
         });
@@ -128,6 +137,12 @@ class Home extends React.Component {
         });
     }
 
+    redirectToResults() {
+        this.setState({
+            redirectToResults: true
+        });
+    }
+
     render() {
 
         let instructions = () => {
@@ -145,16 +160,25 @@ class Home extends React.Component {
             return "......";
         }
 
+        let resultsPage = () => {
+            if (this.state.redirectToResults) {
+                return (<Redirect to={'/search'.concat('?q=', this.state.query.trim())} />);
+            }
+        }
+
         return (
+
             <div className="Home">
                 <div className={"search-box".concat(" ", this.state.searchBoxState)} onMouseEnter={this.onMouseEnterSearchBox} onMouseLeave={this.onMouseLeaveSearchBox}>
-                    <input id="input-query" className="search-txt" type="text" name="query" placeholder="Enter text to search" value={this.state.query} onChange={this.onInputChange} />
-                    <i className="icon-search fa fa-search"></i>
+                    <input id="input-query" className="search-txt" type="text" name="query" placeholder="Enter text to search" value={this.state.query} onChange={this.onInputChange} onSubmit={this.redirectToResults}/>
+                    <i className="icon-search fa fa-search" onClick={this.redirectToResults}></i>
                 </div>
                 <div className={"voice-box".concat(" ", this.state.voiceBoxState)}>
                     <i className="icon-microphone fa fa-microphone" onMouseEnter={this.onMouseEnterMicroPhone} onMouseLeave={this.onMouseLeaveMicroPhone} onClick={this.onClickMicroPhone}></i>
                     <p className="instructions">{instructions()}</p>
                 </div>
+
+                {resultsPage()}
             </div>
         );
     }

@@ -80,7 +80,7 @@ setInterval(() => {
             crawl(url);
         }
     })
-}, 500);
+}, 150);
 
 process.on('uncaughtException', (error) => {
     console.log(error);
