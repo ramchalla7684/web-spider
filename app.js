@@ -27,7 +27,7 @@ app.use((request, response, next) => {
     next();
 });
 
-app.use('/search', searchRouter);
+app.use('/api/search', searchRouter);
 
 app.use((request, response, next) => {
     let error = new Error("Not Found");

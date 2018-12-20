@@ -1,9 +1,9 @@
 const fs = require('fs');
-const { URL } = require('../util/url');
+const { URL } = require('../utils/url');
 
 class Corpus {
     constructor() {
-
+        
     }
 
     static store(content, url) {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import './Home.css';
-import speechRecognition from '../../util/speech';
+import speechRecognition from '../../utils/speech';
 
 class Home extends React.Component {
 
@@ -170,7 +170,7 @@ class Home extends React.Component {
 
             <div className="Home">
                 <div className={"search-box".concat(" ", this.state.searchBoxState)} onMouseEnter={this.onMouseEnterSearchBox} onMouseLeave={this.onMouseLeaveSearchBox}>
-                    <input id="input-query" className="search-txt" type="text" name="query" placeholder="Enter text to search" value={this.state.query} onChange={this.onInputChange} onSubmit={this.redirectToResults}/>
+                    <input id="input-query" className="search-txt" type="text" name="query" autoComplete="off" placeholder="Enter text to search" value={this.state.query} onChange={this.onInputChange} onSubmit={this.redirectToResults}/>
                     <i className="icon-search fa fa-search" onClick={this.redirectToResults}></i>
                 </div>
                 <div className={"voice-box".concat(" ", this.state.voiceBoxState)}>

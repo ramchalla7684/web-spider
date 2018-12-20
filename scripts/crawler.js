@@ -1,9 +1,9 @@
 const fs = require('fs');
 const request = require('request');
-const { DOM } = require('../util/dom');
-const { URL } = require('../util/url');
-const { Frontier } = require('../util/frontier');
-const { Corpus } = require('../util/corpus');
+const { DOM } = require('../utils/dom');
+const { URL } = require('../utils/url');
+const { Frontier } = require('../utils/frontier');
+const { Corpus } = require('../utils/corpus');
 
 let frontier = new Frontier();
 

@@ -1,9 +1,9 @@
 const fs = require('fs');
-const stemmer = require('../util/stemmer');
+const stemmer = require('../utils/stemmer');
 
 let stopWords = [];
 
-let index = (document) => {
+let index = (document, fileName) => {
 
     let indexes = {};
 
@@ -39,15 +39,17 @@ let index = (document) => {
         if (!stopWords.includes(term.toLowerCase())) {
 
             term = stemmer(term);
+
+            //nTerms = number of terms in the document -  useful during TF-IDF
             if (!indexes[term]) {
                 indexes[term] = {};
-                indexes[term][url] = [];
+                indexes[term][url] = { fileName, positions: [], nTerms: terms.length };
             }
             else if (!indexes[term][url]) {
-                indexes[term][url] = [];
+                indexes[term][url] = { fileName, positions: [], nTerms: terms.length };
             }
 
-            indexes[term][url].push(i);
+            indexes[term][url].positions.push(i);
         }
     }
 
@@ -90,7 +92,7 @@ fs.readdir('./corpus', (error, domains) => {
     }
 
     // Just for progress status
-    
+
     for (let i = 0; i < domains.length; i++) {
 
         let domain = domains[i];
@@ -100,12 +102,11 @@ fs.readdir('./corpus', (error, domains) => {
                 try {
                     let document = fs.readFileSync(`./corpus/${domain}/${file}`);
                     document = JSON.parse(document);
-                    index(document);
+                    index(document, file);
                 }
                 catch (error) {
                     console.log(error);
                 }
-
             }
         }
         catch (error) {
@@ -113,6 +114,6 @@ fs.readdir('./corpus', (error, domains) => {
         }
 
         //Just for progress status
-        console.log("Domain: " + (i+1));
+        console.log("Domain: " + (i + 1));
     }
 });

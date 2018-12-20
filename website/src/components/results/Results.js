@@ -11,11 +11,15 @@ class Results extends React.Component {
 
         this.state = {
             query: new URLSearchParams(props.location.search).get("q"),
-            results: [{ href: "https://www.sciencedaily.com/terms/flower.htm", description: "A flower, also known as a bloom or blossom, is the reproductive structure found in flowering plants.", title: "Flower" }, { href: "https://www.sciencedaily.com/releases/2018/12/181218115205.htm", description: "The discovery in China of fossil specimens of a flower called Nanjinganthus from the Early Jurassic shakes up widely accepted theories of plant evolution.", title: "Fossils suggest flowers originated 50 million years earlier than thought -- ScienceDaily" }]
+            results: []
         };
 
         this.onInputChange = this.onInputChange.bind(this);
         this.getSearchResults = this.getSearchResults.bind(this);
+    }
+
+    componentDidMount() {
+        this.getSearchResults();
     }
 
     onInputChange(event) {
@@ -46,7 +50,7 @@ class Results extends React.Component {
         return (
             <div className="Results">
                 <div className="search-container">
-                    <input className="query-field" name="query" value={this.state.query} onChange={this.onInputChange} />
+                    <input className="query-field" name="query" autoComplete="off" value={this.state.query} onChange={this.onInputChange} />
                     <i className="fa fa-search" onClick={this.getSearchResults}></i>
                     <li className="fa fa-microphone"></li>
                 </div>
