@@ -17,11 +17,19 @@
     transition: opacity 0.2s;
 }
 
+.Result cite {
+  margin-top: 100px;
+}
+
+.Result cite:hover, .Result .title:hover {
+  cursor: pointer;
+}
+
 .Result .title {
     color: #e6e6e6;
     font-weight: bold;
     letter-spacing: 0.09em;
-    font-size: 1.2em;
+    font-size: 0.9em;
 }
 
 .Result .description {

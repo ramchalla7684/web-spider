@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Result from '../result/Result';
+import speechRecognition from '../../utils/speech';
 
 import './Results.css';
 
@@ -16,10 +17,21 @@ class Results extends React.Component {
 
         this.onInputChange = this.onInputChange.bind(this);
         this.getSearchResults = this.getSearchResults.bind(this);
+        this.listen = this.listen.bind(this);
     }
 
     componentDidMount() {
         this.getSearchResults();
+
+        document.addEventListener('keydown', (event) => {
+          if(this.state.query.length !== 0)
+          {
+            if(event.key === "Enter")
+            {
+              this.getSearchResults();
+            }
+          }
+        });
     }
 
     onInputChange(event) {
@@ -43,6 +55,11 @@ class Results extends React.Component {
             .catch(error => console.error(error))
     }
 
+    listen()
+    {
+
+    }
+
     render() {
 
         let results = this.state.results.map((result) => <Result key={result.href} data={result} />);
@@ -52,7 +69,7 @@ class Results extends React.Component {
                 <div className="search-container">
                     <input className="query-field" name="query" autoComplete="off" value={this.state.query} onChange={this.onInputChange} />
                     <i className="fa fa-search" onClick={this.getSearchResults}></i>
-                    <li className="fa fa-microphone"></li>
+                    <li className="fa fa-microphone" onClick={this.listen}></li>
                 </div>
 
                 <div className="results-container">

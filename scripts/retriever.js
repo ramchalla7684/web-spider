@@ -49,7 +49,8 @@ class Retriever {
                 return -1;
             }
             return 0;
-        }).map(doc => ({ href: doc.href }));
+        });
+        // .map(doc => ({ href: doc.href }));
 
         // for (let i = 0; i < 10; i++) {
 
@@ -59,7 +60,22 @@ class Retriever {
         //     console.log(domain, endpoint);
         //     fs.readFileSync(`./corpus/${domain}`);
         // }
-        return docs.slice(0, 20);
+
+        docs = docs.slice(0, 20);
+        for(let i = 0; i<docs.length; i++)
+        {
+          let doc = docs[i];
+          let domain = URL.parse(doc.href).domain;
+          let fileName = doc.fileName;
+
+          let content = fs.readFileSync(`./corpus/${domain}/${fileName}`);
+          content = JSON.parse(content);
+
+          let title = content["title"];
+          docs[i].title = title;
+        }
+
+        return docs;
     }
 
     static calcTFIDF(index) {
@@ -72,8 +88,20 @@ class Retriever {
         for (let docID in index) {
             let tf = index[docID].positions.length / index[docID].nTerms;
             let weight = tf * idf;
-            docs.push({ href: docID, weight });
+
+            let fileName = index[docID].fileName;
+            docs.push({ href: docID, fileName, weight });
         }
+
+        docs = docs.sort((a, b) => {
+            if (a.weight < b.weight) {
+                return 1;
+            }
+            else if (a.weight > b.weight) {
+                return -1;
+            }
+            return 0;
+        }).slice(0, 20);
 
         return docs;
     }

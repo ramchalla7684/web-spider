@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "crawl": "node --max-old-space-size=4096 scripts/crawler",
     "index": "node --max-old-space-size=4096 scripts/indexer",
-    "start": "nodemon server"
+    "start": "node server"
   },
   "repository": {
     "type": "git",

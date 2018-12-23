@@ -7,7 +7,7 @@
 }
 
 .Results .results-container {
-    max-width: 560px;
+    max-width: 600px;
     margin-top: 25px;
 }
 
@@ -46,7 +46,7 @@
 
 .Results .search-container .query-field {
     padding: 10px;
-    width: 400px;
+    width: 450px;
     outline: none;
     border: none;
     padding-left: 15px;

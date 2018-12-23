@@ -118,6 +118,9 @@ class Home extends React.Component {
         }
         else {
             speechRecognition.stop();
+            this.setState({
+              voiceBoxState: "inactive"
+            });
             console.log('Voice recognition paused.');
         }
 

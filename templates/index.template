@@ -1,5 +1,5 @@
 {
     term {
-        documentID [positions]
+        documentID { positions: [], nTerms: 0, fileName: "" }
     }
 }
