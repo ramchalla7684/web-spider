@@ -1,9 +1,18 @@
 const fs = require('fs');
+const path = require('path');
 const request = require('request');
-const { DOM } = require('../utils/dom');
-const { URL } = require('../utils/url');
-const { Frontier } = require('../utils/frontier');
-const { Corpus } = require('../utils/corpus');
+const {
+    DOM
+} = require(path.join(__dirname, '../utils/dom'));
+const {
+    URL
+} = require(path.join(__dirname, '../utils/url'));
+const {
+    Frontier
+} = require(path.join(__dirname, '../utils/frontier'));
+const {
+    Corpus
+} = require(path.join(__dirname, '../utils/corpus'));
 
 let frontier = new Frontier();
 
@@ -51,7 +60,10 @@ let purge = (document) => {
     let links = document.links();
     let content = document.content();
 
-    return { ...content, links };
+    return {
+        ...content,
+        links
+    };
 }
 
 fs.readFile('./assets/seeds.txt', (error, data) => {
@@ -61,10 +73,10 @@ fs.readFile('./assets/seeds.txt', (error, data) => {
     }
 
     data = data.toString();
-    data = data.split("\r\n");
+    data = data.split("\n");
 
     for (let i = 0; i < data.length; i++) {
-        setTimeout(() => crawl(URL.parse(data[i])), i * 1000);
+        setTimeout(() => crawl(URL.parse(data[i].trim())), i * 1000);
     }
 
 });

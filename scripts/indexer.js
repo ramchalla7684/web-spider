@@ -43,10 +43,17 @@ let index = (document, fileName) => {
             //nTerms = number of terms in the document -  useful during TF-IDF
             if (!indexes[term]) {
                 indexes[term] = {};
-                indexes[term][url] = { fileName, positions: [], nTerms: terms.length };
-            }
-            else if (!indexes[term][url]) {
-                indexes[term][url] = { fileName, positions: [], nTerms: terms.length };
+                indexes[term][url] = {
+                    fileName,
+                    positions: [],
+                    nTerms: terms.length
+                };
+            } else if (!indexes[term][url]) {
+                indexes[term][url] = {
+                    fileName,
+                    positions: [],
+                    nTerms: terms.length
+                };
             }
 
             indexes[term][url].positions.push(i);
@@ -63,16 +70,18 @@ let save = (indexes) => {
             let fileName = term;
 
             let savedIndexes = {};
-            if (fs.existsSync(`./indexes/${fileName}.json`)) {
-                savedIndexes = fs.readFileSync(`./indexes/${fileName}.json`);
+            if (fs.existsSync(`./data/indexes/${fileName}.json`)) {
+                savedIndexes = fs.readFileSync(`./data/indexes/${fileName}.json`);
                 savedIndexes = JSON.parse(savedIndexes);
             }
 
-            savedIndexes = { ...savedIndexes, ...indexes[term] };
+            savedIndexes = {
+                ...savedIndexes,
+                ...indexes[term]
+            };
 
-            fs.writeFileSync(`./indexes/${fileName}.json`, JSON.stringify(savedIndexes));
-        }
-        catch (error) {
+            fs.writeFileSync(`./data/indexes/${fileName}.json`, JSON.stringify(savedIndexes));
+        } catch (error) {
             console.log(error);
         }
     }
@@ -80,12 +89,11 @@ let save = (indexes) => {
 
 try {
     stopWords = fs.readFileSync('./assets/stop-words.txt').toString().split("\r\n");
-}
-catch (error) {
+} catch (error) {
     console.log(error);
 }
 
-fs.readdir('./corpus', (error, domains) => {
+fs.readdir('./data/corpus', (error, domains) => {
     if (error) {
         console.log(error);
         return;
@@ -97,19 +105,17 @@ fs.readdir('./corpus', (error, domains) => {
 
         let domain = domains[i];
         try {
-            let files = fs.readdirSync(`./corpus/${domain}`);
+            let files = fs.readdirSync(`./data/corpus/${domain}`);
             for (let file of files) {
                 try {
-                    let document = fs.readFileSync(`./corpus/${domain}/${file}`);
+                    let document = fs.readFileSync(`./data/corpus/${domain}/${file}`);
                     document = JSON.parse(document);
                     index(document, file);
-                }
-                catch (error) {
+                } catch (error) {
                     console.log(error);
                 }
             }
-        }
-        catch (error) {
+        } catch (error) {
             console.log(error);
         }
 

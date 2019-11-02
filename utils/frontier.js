@@ -1,5 +1,8 @@
 const fs = require('fs');
-const { URL } = require('../utils/url');
+const path = require('path');
+const {
+    URL
+} = require(path.join(__dirname, '../utils/url'));
 
 class Frontier {
     constructor() {
@@ -12,32 +15,30 @@ class Frontier {
 
         fs.readdi
 
-        fs.readdir('./frontier', (error, files) => {
+        fs.readdir('./data/frontier', (error, files) => {
             if (error) {
                 console.log(error);
                 return;
             }
 
-            this.domains = files;
+            this.domains = files.filter(file => file !== '.gitignore');
         });
     }
 
     static addToVisited(url) {
         let hyperlink = URL.join(url);
 
-        fs.readFile(`./frontier/${url.domain}/visited.json`, (error, data) => {
+        fs.readFile(`./data/frontier/${url.domain}/visited.json`, (error, data) => {
 
             if (error) {
                 if (error.code !== 'ENOENT') {
                     console.log(error);
                 }
                 data = {};
-            }
-            else {
+            } else {
                 try {
                     data = JSON.parse(data);
-                }
-                catch (error) {
+                } catch (error) {
                     data = {};
                 }
             }
@@ -50,7 +51,7 @@ class Frontier {
 
             data[hyperlink].timestamp.push(new Date().valueOf());
 
-            fs.writeFile(`./frontier/${url.domain}/visited.json`, JSON.stringify(data), (error) => {
+            fs.writeFile(`./data/frontier/${url.domain}/visited.json`, JSON.stringify(data), (error) => {
                 if (error) {
                     console.log(error);
                 }
@@ -60,35 +61,32 @@ class Frontier {
 
     static addToPending(hyperlinks, url) {
 
-        fs.readFile(`./frontier/${url.domain}/pending.json`, (error, data) => {
+        fs.readFile(`./data/frontier/${url.domain}/pending.json`, (error, data) => {
 
             if (error) {
                 if (error.code !== 'ENOENT') {
                     console.log(error);
                 }
                 data = [];
-            }
-            else {
+            } else {
                 try {
                     data = JSON.parse(data);
-                }
-                catch (error) {
+                } catch (error) {
                     data = [];
                 }
             }
 
 
-            fs.readFile(`./frontier/${url.domain}/visited.json`, (error, visited) => {
+            fs.readFile(`./data/frontier/${url.domain}/visited.json`, (error, visited) => {
                 if (error) {
 
                     if (error.code === 'ENOENT') {
-                        fs.writeFile(`./frontier/${url.domain}/visited.json`, JSON.stringify({}), (error) => {
+                        fs.writeFile(`./data/frontier/${url.domain}/visited.json`, JSON.stringify({}), (error) => {
                             if (error) {
                                 console.log(error);
                             }
                         });
-                    }
-                    else {
+                    } else {
                         console.log(error);
                     }
 
@@ -103,8 +101,7 @@ class Frontier {
                                 }
                             }
                         }
-                    }
-                    else if (hyperlinks) {
+                    } else if (hyperlinks) {
                         let hyperlink = hyperlinks;
                         hyperlink = URL.toAbsoulte(hyperlink, url);
 
@@ -113,17 +110,15 @@ class Frontier {
                         }
                     }
 
-                    fs.writeFile(`./frontier/${url.domain}/pending.json`, JSON.stringify(data), (error) => {
+                    fs.writeFile(`./data/frontier/${url.domain}/pending.json`, JSON.stringify(data), (error) => {
                         if (error) {
                             console.log(error);
                         }
                     });
-                }
-                else {
+                } else {
                     try {
                         visited = JSON.parse(visited);
-                    }
-                    catch (error) {
+                    } catch (error) {
                         visited = {};
                     }
 
@@ -138,8 +133,7 @@ class Frontier {
                                 }
                             }
                         }
-                    }
-                    else if (hyperlinks) {
+                    } else if (hyperlinks) {
                         let hyperlink = hyperlinks;
                         hyperlink = URL.toAbsoulte(hyperlink, url);
 
@@ -148,7 +142,7 @@ class Frontier {
                         }
                     }
 
-                    fs.writeFile(`./frontier/${url.domain}/pending.json`, JSON.stringify(data), (error) => {
+                    fs.writeFile(`./data/frontier/${url.domain}/pending.json`, JSON.stringify(data), (error) => {
                         if (error) {
                             console.log(error);
                         }
@@ -165,9 +159,8 @@ class Frontier {
         if (this.domains.includes(url.domain)) {
             Frontier.addToVisited(url);
             Frontier.addToPending(hyperlinks, url);
-        }
-        else {
-            fs.mkdir(`./frontier/${url.domain}`, (error) => {
+        } else {
+            fs.mkdir(`./data/frontier/${url.domain}`, (error) => {
                 if (error) {
                     console.log(error);
                     return;
@@ -187,7 +180,7 @@ class Frontier {
 
             this.domains.push(domain);
 
-            fs.readFile(`./frontier/${domain}/pending.json`, (error, data) => {
+            fs.readFile(`./data/frontier/${domain}/pending.json`, (error, data) => {
                 if (error) {
                     if (error.code !== 'ENOENT') {
                         console.log(error);
@@ -197,14 +190,13 @@ class Frontier {
 
                 try {
                     data = JSON.parse(data);
-                }
-                catch (error) {
+                } catch (error) {
                     data = [];
                 }
 
                 let hyperlink = data.shift();
 
-                fs.writeFile(`./frontier/${domain}/pending.json`, JSON.stringify(data), (error) => {
+                fs.writeFile(`./data/frontier/${domain}/pending.json`, JSON.stringify(data), (error) => {
                     if (error) {
                         console.log(error);
                         return;
@@ -212,8 +204,7 @@ class Frontier {
 
                     if (hyperlink) {
                         callback(undefined, URL.parse(hyperlink));
-                    }
-                    else {
+                    } else {
                         callback(undefined, undefined);
                     }
                 });

@@ -1,6 +1,8 @@
 const fs = require('fs');
 const stemmer = require('../utils/stemmer');
-const { URL } = require('../utils/url');
+const {
+    URL
+} = require('../utils/url');
 
 class Retriever {
     constructor() {
@@ -33,8 +35,8 @@ class Retriever {
                 term = stemmer(term);
                 let fileName = term;
 
-                if (fs.existsSync(`./indexes/${fileName}.json`)) {
-                    let index = fs.readFileSync(`./indexes/${fileName}.json`);
+                if (fs.existsSync(`./data/indexes/${fileName}.json`)) {
+                    let index = fs.readFileSync(`./data/indexes/${fileName}.json`);
                     index = JSON.parse(index);
                     docs = docs.concat(Retriever.calcTFIDF(index));
                 }
@@ -44,8 +46,7 @@ class Retriever {
         docs = docs.sort((a, b) => {
             if (a.weight < b.weight) {
                 return 1;
-            }
-            else if (a.weight > b.weight) {
+            } else if (a.weight > b.weight) {
                 return -1;
             }
             return 0;
@@ -58,21 +59,20 @@ class Retriever {
         //     let domain = url.domain;
         //     let endpoint = url.endpoint;
         //     console.log(domain, endpoint);
-        //     fs.readFileSync(`./corpus/${domain}`);
+        //     fs.readFileSync(`./data/corpus/${domain}`);
         // }
 
         docs = docs.slice(0, 20);
-        for(let i = 0; i<docs.length; i++)
-        {
-          let doc = docs[i];
-          let domain = URL.parse(doc.href).domain;
-          let fileName = doc.fileName;
+        for (let i = 0; i < docs.length; i++) {
+            let doc = docs[i];
+            let domain = URL.parse(doc.href).domain;
+            let fileName = doc.fileName;
 
-          let content = fs.readFileSync(`./corpus/${domain}/${fileName}`);
-          content = JSON.parse(content);
+            let content = fs.readFileSync(`./data/corpus/${domain}/${fileName}`);
+            content = JSON.parse(content);
 
-          let title = content["title"];
-          docs[i].title = title;
+            let title = content["title"];
+            docs[i].title = title;
         }
 
         return docs;
@@ -90,14 +90,17 @@ class Retriever {
             let weight = tf * idf;
 
             let fileName = index[docID].fileName;
-            docs.push({ href: docID, fileName, weight });
+            docs.push({
+                href: docID,
+                fileName,
+                weight
+            });
         }
 
         docs = docs.sort((a, b) => {
             if (a.weight < b.weight) {
                 return 1;
-            }
-            else if (a.weight > b.weight) {
+            } else if (a.weight > b.weight) {
                 return -1;
             }
             return 0;
