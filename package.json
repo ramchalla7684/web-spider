@@ -22,8 +22,5 @@
     "htmlparser2": "^4.1.0",
     "morgan": "^1.10.0",
     "request": "^2.88.2"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.4"
   }
 }
